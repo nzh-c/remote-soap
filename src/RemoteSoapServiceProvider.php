@@ -3,7 +3,6 @@
 namespace RemoteClient\RemoteSoap;
 
 use Illuminate\Support\ServiceProvider;
-use function foo\func;
 
 class RemoteSoapServiceProvider extends ServiceProvider
 {

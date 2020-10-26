@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static \RemoteClient\RemoteSoap\RemoteSoapClient remote_client();
+ * @method static \RemoteClient\RemoteSoap\RemoteSoapClient setAuthCode($authcode);
+ * @method static \RemoteClient\RemoteSoap\RemoteSoapClient setUrl($url);
+ * @method static \RemoteClient\RemoteSoap\RemoteSoapClient setSendData($sendData);
+ * @method static \RemoteClient\RemoteSoap\RemoteSoapClient setFuncName($funcName);
  * Class RemoteSoapClient
  * @package RemoteClient\RemoteSoap\Facades
  */
