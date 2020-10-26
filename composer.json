@@ -1,0 +1,19 @@
+{
+    "name": "n/remote-soap-client",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ning",
+            "email": "ningzehong@live.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "RemoteClient\\RemoteSoap\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^7.2"
+    }
+}
