@@ -15,7 +15,7 @@ class RemoteSoapServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('RemoteSoapClient',function ($app){
+        $this->app->singleton('RemoteSoapClient',function ($app){
             return new RemoteSoapClient($app['config']);
         });
     }
