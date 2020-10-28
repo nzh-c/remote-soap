@@ -4,62 +4,48 @@
  * User: admin
  * CreateTime: 2020/10/26 上午11:40
  */
-
 namespace RemoteClient\RemoteSoap;
+use Illuminate\Config\Repository;
 
 class RemoteSoapClient
 {
     protected $config = null;
-    protected $authCode = '';
+    protected $redundantData = '';
     protected $url = '';
-    protected $sendData = '';
-    protected $funcName = '';
+    protected $mobile = null;
+    protected $platform = '';
+    protected $ifMultiple = null;
+    protected $appid = '';
+    protected $appSecret = '';
     public function __construct(Repository $config)
     {
         $this->config = $config;
+        $this->appid = $this->config->get('remote.appid');
+        $this->appSecret = $this->config->get('remote.appSecret');
+        $this->url = $this->config->get('remote.url');
     }
-
     /**
-     * Identity verification parameters
-     * @param $authcode
+     * @param int|array     $mobile          要发送的手机号
+     * @param string        $platform        来源
+     * @param bool          $ifMultiple      是否多个数据
      * @return $this
      */
-    public function setAuthCode($authcode)
+    public function setSendData($mobile,$platform,$ifMultiple = false)
     {
-        $this->authCode = $authcode;
+        $this->mobile = $mobile;
+        $this->platform = $platform;
+        $this->ifMultiple = $ifMultiple;
         return $this;
     }
 
     /**
-     * set url
-     * @param $url
+     * 冗余数据
+     * @param $data
      * @return $this
      */
-    public function setUrl($url)
+    public function redundantData($data)
     {
-        $this->url = $url;
-        return $this;
-    }
-
-    /**
-     * Data to send
-     * @param $sendData
-     * @return $this
-     */
-    public function setSendData($sendData)
-    {
-        $this->sendData = $sendData;
-        return $this;
-    }
-
-    /**
-     * method to call
-     * @param $funcName
-     * @return $this
-     */
-    public function setFuncName($funcName)
-    {
-        $this->funcName = $funcName;
+        $this->redundantData = $data;
         return $this;
     }
     /**
@@ -72,13 +58,50 @@ class RemoteSoapClient
         try {
             ini_set('soap.wsdl_cache_enabled', 0);
             $client = new \SoapClient($this->url.'?wsdl', array("exceptions" => 1));
-            $authvalues = new \SoapVar(array('authcode' => $this->authCode,), SOAP_ENC_OBJECT);
+            $authvalues = new \SoapVar(array('auth_data' => json_encode($this->authParam())), SOAP_ENC_OBJECT);
             $header = new \SoapHeader('urn:soap', 'auth', $authvalues, false, SOAP_ACTOR_NEXT);
             $client->__setSoapHeaders(array($header));
-            $return = $client->{$this->funcName}($this->sendData);
+            $return = $client->store(json_encode(['mobile'=>$this->mobile,'platform'=>$this->platform]), $this->ifMultiple);
             return $return;
         }catch (\SoapFault $e){
             throw new \Exception($e->faultstring);
         }
+    }
+
+    /**
+     * @return array
+     */
+    private function authParam()
+    {
+        $params = [
+            'format' => 'json',
+            'sign_method' => 'md5',
+            'v' => 'v1.0',
+            'app_id' => $this->appid,
+            'time' => time(),
+        ];
+        $params['sign'] = $this->_getSign($params,$this->appSecret );
+        return $params;
+    }
+
+    /**
+     * 获取签名
+     * @param $params
+     * @param $secretKey
+     * @return string
+     */
+    protected function _getSign($params, $secretKey)
+    {
+        ksort($params);
+        $stringToBeSigned = $secretKey;
+        foreach ($params as $k => $v) {
+            if (is_string($v) && '@' !== substr($v, 0, 1)) {
+                $stringToBeSigned .= "$k$v";
+            }
+        }
+        unset($k, $v);
+        $stringToBeSigned .= $secretKey;
+
+        return strtoupper(md5($stringToBeSigned));
     }
 }
