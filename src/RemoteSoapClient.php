@@ -20,9 +20,9 @@ class RemoteSoapClient
     public function __construct(Repository $config)
     {
         $this->config = $config;
-        $this->appid = $this->config->get('remote.appid');
-        $this->appSecret = $this->config->get('remote.appSecret');
-        $this->url = $this->config->get('remote.url');
+        $this->appid = $this->config->get('remote.options.appid');
+        $this->appSecret = $this->config->get('remote.options.appSecret');
+        $this->url = $this->config->get('remote.options.url');
     }
     /**
      * @param int|array     $mobile          要发送的手机号
