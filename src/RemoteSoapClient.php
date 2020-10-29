@@ -23,17 +23,16 @@ class RemoteSoapClient
         $this->appid = $this->config->get('remote.options.appid');
         $this->appSecret = $this->config->get('remote.options.appSecret');
         $this->url = $this->config->get('remote.options.url');
+        $this->platform = $this->config->get('remote.options.platform');
     }
     /**
      * @param int|array     $mobile          要发送的手机号
-     * @param string        $platform        来源
      * @param bool          $ifMultiple      是否多个数据
      * @return $this
      */
-    public function setSendData($mobile,$platform,$ifMultiple = false)
+    public function setSendData($mobile,$ifMultiple = false)
     {
         $this->mobile = $mobile;
-        $this->platform = $platform;
         $this->ifMultiple = $ifMultiple;
         return $this;
     }
