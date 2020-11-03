@@ -73,7 +73,7 @@ class HandleUserUniqid implements ShouldQueue
         {
             $data = json_decode($data,true);
             $returnData = $data['data'];
-            $sql = "INSERT INTO `users` (`mobile`,`uniqid`) VALUES ";
+            $sql = "INSERT INTO `users` (`mobile`,`uid`) VALUES ";
             $mobiles = [];
             foreach ($returnData as $item)
             {
@@ -81,7 +81,7 @@ class HandleUserUniqid implements ShouldQueue
                 $mobiles[$item['mobile']] = $item['uid'];
             }
             $sql = rtrim($sql,',');
-            $sql .= " ON DUPLICATE KEY UPDATE uniqid=VALUES(`uniqid`);";
+            $sql .= " ON DUPLICATE KEY UPDATE uid=VALUES(`uid`);";
             try {
                 DB::insert($sql);
             }catch (\Exception $e)
