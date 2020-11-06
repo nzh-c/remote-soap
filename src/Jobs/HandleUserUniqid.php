@@ -33,7 +33,7 @@ class HandleUserUniqid implements ShouldQueue
      * @param array $mobile      手机号
      * @param int   $nums        每次最多执行个数(默认500)
      */
-    public function __construct($user,$mobile,$nums=500)
+    public function __construct($mobile,$user = null,$nums=500)
     {
         $this->user = $user;
         $this->mobile = $mobile;
