@@ -56,7 +56,7 @@ class RemoteSoapClient
     {
         try {
             ini_set('soap.wsdl_cache_enabled', 0);
-            $client = new \SoapClient($this->url.'?wsdl', array("exceptions" => 1));
+            $client = new \SoapClient($this->url.'?wsdl', array("exceptions" => 1,"keep_alive" => false,));
             $authvalues = new \SoapVar(array('auth_data' => json_encode($this->authParam())), SOAP_ENC_OBJECT);
             $header = new \SoapHeader('urn:soap', 'auth', $authvalues, false, SOAP_ACTOR_NEXT);
             $client->__setSoapHeaders(array($header));
