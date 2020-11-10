@@ -50,17 +50,12 @@ class HandleUserUniqid implements ShouldQueue
         if(count($this->mobile) > $this->nums)
         {
             $mobile = array_chunk($this->mobile,$this->nums);
-        }else{
-            $mobile = $this->mobile;
-        }
-        if(count($mobile) != count($mobile,1))
-        {
             foreach ($mobile as $v)
             {
                 $this->createUid($v);
             }
         }else{
-            $this->createUid($mobile);
+            $this->createUid($this->mobile);
         }
     }
 

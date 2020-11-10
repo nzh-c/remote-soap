@@ -6,6 +6,7 @@
  */
 namespace RemoteClient\RemoteSoap;
 use Illuminate\Config\Repository;
+use Illuminate\Support\Facades\Log;
 
 class RemoteSoapClient
 {
@@ -55,16 +56,33 @@ class RemoteSoapClient
     public function remoteClient()
     {
         try {
-            ini_set('soap.wsdl_cache_enabled', 0);
-            $client = new \SoapClient($this->url.'?wsdl', array("exceptions" => 1,"keep_alive" => false,));
-            $authvalues = new \SoapVar(array('auth_data' => json_encode($this->authParam())), SOAP_ENC_OBJECT);
-            $header = new \SoapHeader('urn:soap', 'auth', $authvalues, false, SOAP_ACTOR_NEXT);
-            $client->__setSoapHeaders(array($header));
+            $client = $this->clientServer();
             $return = $client->store(json_encode(['mobile'=>$this->mobile,'platform'=>$this->platform]), $this->ifMultiple);
             return $return;
         }catch (\SoapFault $e){
             throw new \Exception($e->faultstring);
         }
+    }
+
+    public function updateUserPlatform()
+    {
+        try {
+            $client = $this->clientServer();
+            $return = $client->updatePlatform(json_encode(['platform'=>$this->platform]),$this->redundantData['uid']);
+            return $return;
+        }catch (\SoapFault $e){
+            throw new \Exception($e->faultstring);
+        }
+    }
+
+    private function clientServer()
+    {
+        ini_set('soap.wsdl_cache_enabled', 0);
+        $client = new \SoapClient($this->url.'?wsdl', array("exceptions" => 1,"keep_alive" => false,));
+        $authvalues = new \SoapVar(array('auth_data' => json_encode($this->authParam())), SOAP_ENC_OBJECT);
+        $header = new \SoapHeader('urn:soap', 'auth', $authvalues, false, SOAP_ACTOR_NEXT);
+        $client->__setSoapHeaders(array($header));
+        return $client;
     }
 
     /**
